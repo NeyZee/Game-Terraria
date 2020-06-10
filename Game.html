@@ -1,0 +1,130 @@
+<html>
+<head>
+<title>Game33</title>
+<meta charset="UTF-8">
+<style>
+</style>
+</head>
+<body>
+    <script type="text/javascript" src="pointjs_0.2.0.9.js"></script>
+    <script type="text/javascript" src="bitJs.js"></script>
+    <script>
+let pjs = new PointJS(document.documentElement.clientWidth, document.documentElement.clientHeight, {backgroundColor: '#999999'})
+let game = pjs.game;
+let key = pjs.keyControl;
+key.initControl();
+pjs.touchControl.initControl();
+let p = pjs.vector.point;
+pjs.mouseControl.initControl();
+let tiles = pjs.tiles;
+//pjs.mouseControl.setCursorImage("cursor.png");
+
+let player = game.newRectObject({
+fillColor: "orange",
+x: 100,
+y: 1460,
+w: 30,
+h: 40,
+})
+
+let grass = 0;
+
+let map = {
+	width: 40,
+	height: 40,
+	level: [
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'',
+'1111111111111111',
+'',
+'',
+'',
+'1111111111111111',
+'',
+'',
+'',
+'11111111111111111111111111',
+]
+}
+//1520px
+
+
+let map2 = [];
+
+pjs.OOP.forArr(map.level, function (string, y) {
+pjs.OOP.forArr(string, function (el, x) { //1 - Земля (трава). 2 - Почва (грязь). 3 - Камень
+	if(el==1) {
+		map2.push(game.newImageObject( {
+            file: "grass.png",
+			x: x * map.width,
+			y: y * map.height,
+			w:40,
+            h:40,
+        }))
+    }
+})})
+
+let preset = pjs.presets;
+
+game.newLoop('myGame', function () {
+pjs.OOP.drawArr(map2)
+
+preset.physicsMoveInit(player, 6, 9, 0.02, 0, 0, 1, 0, 1, -4, ["D", "RIGHT"], ["A", "LEFT"], ["W"], ["NONE"] );
+
+for(let i in map2){
+preset.physicsMoveCollision(map2[i]);
+}
+
+preset.physicsMove();
+
+if(pjs.mouseControl.isPress("RIGHT") == true) {
+map2.push(game.newImageObject({
+file: "grass.png",
+x: Math.floor(pjs.mouseControl.getPosition().x/40)*40,
+y: Math.floor(pjs.mouseControl.getPosition().y/40)*40,
+w: 40,
+h: 40,
+}))
+}
+
+player.draw();
+
+if(key.isPress("Y")){
+console.log(map2)
+}
+
+pjs.camera.follow(player, 4)
+})
+game.setLoop('myGame');
+game.start();
+
+</script>
+</body>
+</html>
